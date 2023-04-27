@@ -1,0 +1,38 @@
+.tile {
+    display: grid;
+    place-content: center;
+    width: 100px;
+    height: 100px;
+}
+
+.tile .piece {
+    width: 100px;
+    height: 100px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 80px;
+}
+
+.tile .piece:hover {
+    cursor: grab;
+}
+
+.tile .piece:active {
+    cursor: grabbing;
+}
+
+.blk-tile {
+    width: 100px;
+    height: 100px;
+    background-color: rgb(104, 1, 1);
+}
+
+.wht-tile {
+    width: 100px;
+    height: 100px;
+    background-color: wheat;
+}
+
+.piece {
+    width: 80px;
+}

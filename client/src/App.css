@@ -1,0 +1,6 @@
+#app {
+  display: grid;
+  place-content: center;
+  height: 100vh;
+  background-image: linear-gradient(to bottom right, rgb(125, 8, 8), black);
+}
