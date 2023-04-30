@@ -5,6 +5,11 @@
     height: 100px;
 }
 
+.tile:hover {
+    border: ridge 3px goldenrod;
+    z-index: 2;
+}
+
 .tile .piece {
     width: 100px;
     height: 100px;
