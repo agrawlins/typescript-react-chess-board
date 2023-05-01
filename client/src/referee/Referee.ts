@@ -20,6 +20,20 @@ export default class Referee {
         }
    }
 
+   enPassant(px: number, py: number, x: number, y: number, type: PieceType, team: Team, boardState: Piece[]) {
+        const pwnDirection = (team === Team.wht) ? 1 : -1
+        if(type === PieceType.pwn){
+            if ((x - px === -1 || x - px === 1) && y - py === pwnDirection) {
+                const piece = boardState.find(p => p.x === x && p.y === y - pwnDirection && p.enPassant)
+                if (piece) {      
+                    return true
+                }
+            }
+        }
+        
+       return false
+   }
+
     isValidMove(px: number, py: number, x: number, y: number, type: PieceType, team: Team, boardState: Piece[]) {
         //PAWN RULES
         if(type === PieceType.pwn) {
@@ -40,13 +54,11 @@ export default class Referee {
             //Attack
             else if (x - px === -1 && y - py === pwnDirection) {
                 //Atk in upr/btm l crnr
-                console.log("upr/btm l")
                 if (this.tileOccupiedByOpponent(x, y, boardState, team)) {
                     return true
                 }
             } else if (x - px === 1 && y - py === pwnDirection) {
                 //Atk in upr/btm r crnr                
-                console.log("upr/btm r")
                 if (this.tileOccupiedByOpponent(x, y, boardState, team)) {
                     return true
                 }

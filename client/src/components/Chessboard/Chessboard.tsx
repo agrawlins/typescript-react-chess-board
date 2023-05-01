@@ -2,7 +2,7 @@ import './Chessboard.css'
 import Tile from '../Tile/Tile'
 import Referee from "../../referee/Referee"
 import {useRef, useState } from 'react'
-import { relative } from 'path'
+
 
 const horizontalAxis = ["a", "b", "c", "d", "e", "f", "g", "h"]
 const verticalAxis = [1, 2, 3, 4, 5, 6, 7, 8]
@@ -12,7 +12,8 @@ export interface Piece {
     x: number
     y: number
     type: PieceType,
-    team: Team
+    team: Team,
+    enPassant?: boolean
 }
 
 export enum PieceType {
@@ -115,18 +116,47 @@ export default function Chessboard() {
 
             const currentPiece = pieces.find(p => p.x == gridX && p.y == gridY)
             const attackedPiece = pieces.find(p => p.x === x && p.y === y)
+
+            //currentPiece (3,4)
             if (currentPiece) {                
                 const validMove = referee.isValidMove(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces)
-                if (validMove) { 
+                const isEnPassant = referee.enPassant(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces)
+                const pwnDirection = (currentPiece.team === Team.wht) ? 1 : -1
+                if (isEnPassant) {
+                    const updatedPieces = pieces.reduce((results, piece) => {
+                        if (piece.x === gridX && piece.y === gridY) {
+                            piece.enPassant = false
+                            piece.x = x
+                            piece.y = y
+                            results.push(piece)
+                        } else if (!(piece.x === x && piece.y === y - pwnDirection)) {
+                            if (piece.type === PieceType.pwn) {
+                                piece.enPassant = false
+                            }
+                            results.push(piece)
+                        }
+                        return results
+                    },[] as Piece[])
+                    setPieces(updatedPieces)
+                }
+                else if (validMove) { 
                     //UPDATES PIECE POSITION
                          
                     //Removes Piece if Attacked
                     const updatedPieces = pieces.reduce((results, piece) => {
-                        if (piece.x === currentPiece.x && piece.y === currentPiece.y) {
+                        if (piece.x === gridX && piece.y === gridY) {
+                            if (Math.abs(gridY - y) === 2 && piece.type === PieceType.pwn) {
+                                piece.enPassant = true
+                            } else {
+                                piece.enPassant = false
+                            }
                             piece.x = x
                             piece.y = y
                             results.push(piece)
                         } else if (!(piece.x === x && piece.y === y)) {
+                            if (piece.type === PieceType.pwn) {
+                                piece.enPassant = false
+                            }
                             results.push(piece)
                         }
                         return results
