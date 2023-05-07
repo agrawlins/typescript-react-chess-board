@@ -66,8 +66,8 @@ export const initState: Piece[] = [
   {
     image: "images/blkqen.png",
     position: {
-      x: 3,
-      y: 7,
+      x: 4,
+      y: 4,
     },
     type: PieceType.qen,
     team: Team.blk,
