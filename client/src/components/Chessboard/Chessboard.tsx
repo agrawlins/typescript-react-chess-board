@@ -17,11 +17,11 @@ import {
 export default function Chessboard() {
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
   const [grabPosition, setGrabPosition] = useState<Position>({ x: -1, y: -1 });
-  // const [gridX, setGridX] = useState(0)
-  // const [gridY, setGridY] = useState(0)
+  const [pwnPromoted, setPwnPromoted] = useState<Piece>()
   const [pieces, setPieces] = useState<Piece[]>(initState);
   const chessboardRef = useRef<HTMLDivElement>(null);
   let board = [];
+  const modelRef = useRef<HTMLDivElement>(null)
   const referee = new Referee();
 
   function grapPiece(e: React.MouseEvent) {
@@ -140,6 +140,11 @@ export default function Chessboard() {
             //   }
               piece.position.x = x;
               piece.position.y = y;
+              let promotionRow = piece.team === Team.wht ? 7 : 0
+              if (y === promotionRow && piece.type === PieceType.pwn) {
+                modelRef.current?.classList.remove("hidden")
+                setPwnPromoted(piece)
+              }
               results.push(piece);
             } else if (!samePosition(piece.position, { x, y })) {
               if (piece.type === PieceType.pwn) {
@@ -179,15 +184,79 @@ export default function Chessboard() {
       board.push(<Tile key={`${j}, ${i}`} number={number} image={image} />);
     }
   }
+
+  function promotePwn(pieceType: PieceType) {
+    if (pwnPromoted === undefined) {
+      return
+    }
+    const updatedPieces = pieces.reduce((results, piece) => {
+      if (samePosition(piece.position, pwnPromoted.position)) {
+        piece.type = pieceType
+        const team = piece.team === Team.wht ? "wht" : "blk"
+        let pieceImg = ""
+        switch (pieceType) {
+          case PieceType.ruk:
+            pieceImg = "ruk"
+            break;
+          case PieceType.nit:
+            pieceImg = "nit"
+            break;
+          case PieceType.bsp:
+            pieceImg = "bsp"
+            break;
+          case PieceType.qen:
+            pieceImg = "qen"
+            break;
+        }
+        piece.image = `images/${team}${pieceImg}.png`
+      }
+      results.push(piece)
+      return results
+    }, [] as Piece[])
+    setPieces(updatedPieces)
+    modelRef.current?.classList.add("hidden")
+  }
+
+  function promotionTeam(){
+    return pwnPromoted?.team === Team.wht ? "wht" : "blk"
+  }
+
+//   for (let p = 0; p < 2; p++) {
+//     const team = (p === 0) ? Team.blk : Team.wht
+//     const color = (p=== 0) ? "blk": "wht"
+//     const y = (p === 0) ? 7 : 0
+// }
+//     initState.push({image: `images/${color}kng.png`, position:{x: 4, y}, type: PieceType.kng, team: team})
+//     initState.push({image: `images/${color}qen.png`, position:{x: 3, y}, type: PieceType.qen, team: team})
+//     initState.push({image: `images/${color}bsp.png`, position:{x: 2, y}, type: PieceType.bsp, team: team})
+//     initState.push({image: `images/${color}bsp.png`, position:{x: 5, y}, type: PieceType.bsp, team: team})
+//     initState.push({image: `images/${color}nit.png`, position:{x: 1, y}, type: PieceType.nit, team: team})
+//     initState.push({image: `images/${color}nit.png`, position:{x: 6, y}, type: PieceType.nit, team: team})
+//     initState.push({image: `images/${color}ruk.png`, position:{x: 0, y}, type: PieceType.ruk, team: team})
+//     initState.push({image: `images/${color}ruk.png`, position:{x: 7, y}, type: PieceType.ruk, team: team})
   return (
-    <div
-      id="chessboard"
-      ref={chessboardRef}
-      onMouseUp={(e) => dropPiece(e)}
-      onMouseMove={(e) => movePiece(e)}
-      onMouseDown={(e) => grapPiece(e)}
-    >
-      {board}
-    </div>
+    <>
+      <div
+        id="pwnPromotionModel"
+        className="hidden"
+        ref={modelRef}
+      >
+        <div className="modelBody">
+          <img onClick={() => promotePwn(PieceType.bsp)} src={`/images/${promotionTeam()}bsp.png`}/>
+          <img onClick={() => promotePwn(PieceType.nit)} src={`/images/${promotionTeam()}nit.png`}/>
+          <img onClick={() => promotePwn(PieceType.ruk)} src={`/images/${promotionTeam()}ruk.png`}/>
+          <img onClick={() => promotePwn(PieceType.qen)} src={`/images/${promotionTeam()}qen.png`}/>
+        </div>
+      </div>
+      <div
+        id="chessboard"
+        ref={chessboardRef}
+        onMouseUp={(e) => dropPiece(e)}
+        onMouseMove={(e) => movePiece(e)}
+        onMouseDown={(e) => grapPiece(e)}
+      >
+        {board}
+      </div>
+    </>
   );
 }
