@@ -1,43 +1,56 @@
 .tile {
-    display: grid;
-    place-content: center;
-    width: 100px;
-    height: 100px;
+  display: grid;
+  place-content: center;
+  width: 100px;
+  height: 100px;
 }
 
 .tile:hover {
-    border: ridge 3px goldenrod;
-    z-index: 2;
+  border: ridge 3px goldenrod;
+  z-index: 2;
 }
 
-.tile .piece {
-    width: 100px;
-    height: 100px;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 80px;
+.tile .chess-piece {
+  width: 100px;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 80px;
 }
 
-.tile .piece:hover {
-    cursor: grab;
+.tile .chess-piece:hover {
+  cursor: grab;
 }
 
-.tile .piece:active {
-    cursor: grabbing;
+.tile .chess-piece:active {
+  cursor: grabbing;
 }
 
-.blk-tile {
-    width: 100px;
-    height: 100px;
-    background-color: rgb(104, 1, 1);
+.black-tile {
+  background-color: rgb(104, 1, 1);
 }
 
-.wht-tile {
-    width: 100px;
-    height: 100px;
-    background-color: wheat;
+.white-tile {
+  background-color: wheat;
 }
 
-.piece {
-    width: 80px;
+.tile img {
+  width: 80px;
+}
+
+.tile-highlight:not(.chess-piece-tile)::before {
+  content: " ";
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.tile-highlight.chess-piece-tile::before {
+  position: absolute;
+  content: " ";
+  width: 90px;
+  height: 90px;
+  border: 5px solid rgba(255, 0, 0, 0.8);
+  border-radius: 50%;
 }
