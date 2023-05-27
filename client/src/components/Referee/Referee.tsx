@@ -151,9 +151,9 @@ export default function Referee() {
       <h1 style={{ color: "white", fontSize: "24px", textAlign: "center" }}>
         {board.totalTurns % 2 !== 1 ? "Black" : "White"}'s Turn
       </h1>
-      <p style={{ color: "white", fontSize: "24px", textAlign: "center" }}>
+      {/* <p style={{ color: "white", fontSize: "24px", textAlign: "center" }}>
         Total turns: {board.totalTurns - 1}
-      </p>
+      </p> */}
       <div className="modal hidden" ref={modalRef}>
         <div className="modal-body">
           <img
